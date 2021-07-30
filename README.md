@@ -7,7 +7,7 @@ Accepts a boolean condition for whether a new value should be generated. This al
 ## Sample Use Case
 
 ### Problem
-Consider a case where you want to generate a new random ID for a resource if *and only if* a given input variable is set. With conventional Terraform, there's no way to do this. You might try something like this:
+Consider a case where you want to generate a new random ID for a resource **if and only if** a given input variable is set. With conventional Terraform, there's no way to do this. You might try something like this:
 ```
 variable "regenerate_id" {
   description = "Whether to generate a new random ID."
@@ -27,7 +27,7 @@ resource "random_id" "my_id" {
 
 But the problem is that the `random_id` will only be re-created when the input variable is *different* than it was on the previous `terraform apply`. We want it to regenerate when provided and set to `true`, and keep the old one when it's not provided or is set to `false`. That is to say, if I run `terraform apply -var="regenerate_id=true"` repeatedly, it should generate a new ID *each time*, and as soon as I run `terraform apply` without that input variable, it should stop generating a new ID.
 
-You might say "OK, well let's generate a new `keeper` value when the input variable is set to `true`, something like this:
+You might say "OK, well let's generate a new `keeper` value when the input variable is set to `true`," something like this:
 ```
 variable "regenerate_id" {
   description = "Whether to generate a new random ID."
@@ -80,7 +80,10 @@ output "my_id" {
 
 Now let's see what happens when we run it several times:
 
-- Run 1 - `terraform apply`: Since no ID has been generated yet, it creates one
+#### Run 1
+`terraform apply`
+
+Since no ID has been generated yet, it creates one:
 ```
  # random_id.my_id will be created
   + resource "random_id" "my_id" {
@@ -117,7 +120,10 @@ Outputs:
 my_id = "WnP_u4H7Jwg"
 ```
 
-- Run 2 - `terraform apply`: Since an ID has already been generated and the `regenerate_id` input variable is not set to `true`, it does nothing
+#### Run 2
+`terraform apply`
+
+Since an ID has already been generated and the `regenerate_id` input variable is not set to `true`, it does nothing:
 ```
 No changes. Your infrastructure matches the configuration.
 
@@ -131,7 +137,10 @@ Outputs:
 my_id = "WnP_u4H7Jwg"
 ```
 
-- Run 3 - `terraform apply -var="regenerate_id=true"`: Since we've set the `regenerate_id` input variable to `true`, it will re-create the ID
+#### Run 3
+`terraform apply -var="regenerate_id=true"`
+
+Since we've set the `regenerate_id` input variable to `true`, it will re-create the ID:
 ```
 Terraform will perform the following actions:
 
@@ -174,7 +183,10 @@ Outputs:
 my_id = "OBw2GzuOCrQ"
 ```
 
-- Run 4 - `terraform apply -var="regenerate_id=true"`: Since we still have the `regenerate_id` input variable set as `true`, it will re-create the ID **again**
+#### Run 4
+`terraform apply -var="regenerate_id=true"`
+
+Since we still have the `regenerate_id` input variable set as `true`, it will re-create the ID **again**:
 ```
 Terraform will perform the following actions:
 
@@ -217,7 +229,10 @@ Outputs:
 my_id = "psuWnKDBsnI"
 ```
 
-- Run 5: `terraform apply`: Since an ID has already been generated and the `regenerate_id` input variable is not set to `true`, it does nothing (even though the input variable's value (`false`) is different than it was on the last apply (`true`))
+#### Run 5
+`terraform apply`
+
+Since an ID has already been generated and the `regenerate_id` input variable is not set to `true`, it does nothing (even though the input variable's value (`false`) is different than it was on the last apply (`true`)):
 ```
 No changes. Your infrastructure matches the configuration.
 
