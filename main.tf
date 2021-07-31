@@ -4,7 +4,7 @@ terraform {
 
 module "state" {
   source  = "Invicton-Labs/get-state/null"
-  version = "0.1.0"
+  version = "0.2.1"
 }
 
 // A unique ID for this module
@@ -20,7 +20,7 @@ resource "random_uuid" "output_id" {
 
 locals {
   existing_resources = [
-    for resource in module.state.resources :
+    for address, resource in module.state.resources :
     resource
     if resource.type == "random_uuid" && resource.name == "output_id" ? lookup(resource.instances[0].attributes.keepers, "___CONDITIONAL_TRIGGER_module_id", null) == random_uuid.module_id.id : false
   ]
